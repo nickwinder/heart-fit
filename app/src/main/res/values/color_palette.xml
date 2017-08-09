@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mcgpalette0_50">#fee8e7</color>
+    <color name="mcgpalette0_100">#fcc7c3</color>
+    <color name="mcgpalette0_200">#faa19b</color>
+    <color name="mcgpalette0_300">#f77b72</color>
+    <color name="mcgpalette0_400">#f65f54</color>
+    <color name="mcgpalette0_500">#f44336</color>
+    <color name="mcgpalette0_600">#f33d30</color>
+    <color name="mcgpalette0_700">#f13429</color>
+    <color name="mcgpalette0_800">#ef2c22</color>
+    <color name="mcgpalette0_900">#ec1e16</color>
+    <color name="mcgpalette0_A100">#ffffff</color>
+    <color name="mcgpalette0_A200">#ffe9e9</color>
+    <color name="mcgpalette0_A400">#ffb8b6</color>
+    <color name="mcgpalette0_A700">#ff9f9c</color>
+</resources>

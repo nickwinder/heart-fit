@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Heart Fit</string>
+
+    <string name="heart_icon">heart icon</string>
+    <string name="average">average</string>
+    <string name="minimum">minimum</string>
+    <string name="maximum">maximum</string>
+</resources>
