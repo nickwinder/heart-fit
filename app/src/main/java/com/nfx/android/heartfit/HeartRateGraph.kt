@@ -1,13 +1,10 @@
 package com.nfx.android.heartfit
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.content.IntentSender
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
@@ -19,14 +16,10 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
-import com.google.android.gms.common.ConnectionResult
-import com.nfx.android.heartfit.GoogleFitManager.ConnectionStatus
 import com.nfx.android.heartfit.dependancyinjection.BaseActivity
 import com.nfx.android.heartfit.dependancyinjection.utils.Time
 import com.nfx.android.heartfit.model.HeartRateData
-import com.nfx.android.heartfit.network.GoogleFitHeartRateInterface
 import com.nfx.android.heartfit.network.HeartRateDataInterface
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -52,9 +45,6 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
     private val mHideHandler = Handler()
     private val mHideRunnable = Runnable { hide() }
 
-    private var authInProgress = false
-    private val REQUEST_OAUTH = 1
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -70,29 +60,14 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
 
         setupDatePicker()
 
-        connectToHeartRateInterface()
+        val calendar = Calendar.getInstance()
+        heartRatePresenter.getHeartRateDataForDate(calendar)
     }
 
     override fun onStart() {
         super.onStart()
 
         delayedHide(100)
-    }
-
-    private fun connectToHeartRateInterface() {
-        if (heartRateDataInterface is GoogleFitHeartRateInterface) {
-            (heartRateDataInterface as GoogleFitHeartRateInterface).getConnectionListener()
-                    .subscribe { (connectionStatus, _, connectionResult) ->
-                        when (connectionStatus) {
-                            ConnectionStatus.CONNECTED ->
-                                heartRatePresenter.getHeartRateDataForDate(Calendar.getInstance())
-                            ConnectionStatus.SUSPENDED -> googleFitAccessSuspended()
-                            ConnectionStatus.DISCONNECTED -> handleReconnect(connectionResult)
-                        }
-                    }
-        } else {
-            heartRatePresenter.getHeartRateDataForDate(Calendar.getInstance())
-        }
     }
 
     private fun setupGraphsXAxis() {
@@ -168,41 +143,6 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         lineChart.legend.isEnabled = false
         lineChart.isScaleYEnabled = false
         lineChart.setViewPortOffsets(0f, 0f, 0f, 0f)
-    }
-
-    private fun googleFitAccessSuspended() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    private fun handleReconnect(connectionResult: ConnectionResult?) {
-        if(connectionResult != null) {
-            if (connectionResult.hasResolution()) {
-                if (!authInProgress) {
-                    try {
-                        authInProgress = true
-                        connectionResult.startResolutionForResult(this, REQUEST_OAUTH)
-                    } catch(e: IntentSender.SendIntentException) {
-                        e.printStackTrace()
-                    }
-                } else {
-                    Log.e("GoogleFit", "authInProgress")
-                }
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if( requestCode == REQUEST_OAUTH ) {
-            authInProgress = false
-            if( resultCode == RESULT_OK ) {
-                (heartRateDataInterface as GoogleFitHeartRateInterface).connectToManager()
-            } else if( resultCode == RESULT_CANCELED ) {
-                Log.e( "GoogleFit", "RESULT_CANCELED" )
-            }
-        } else {
-            Log.e("GoogleFit", "requestCode NOT request_oauth")
-        }
     }
 
     override fun updateMinimumHeartRate(heartRate: Int) {

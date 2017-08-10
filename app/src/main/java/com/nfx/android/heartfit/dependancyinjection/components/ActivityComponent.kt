@@ -1,12 +1,11 @@
 package com.nfx.android.heartfit.dependancyinjection.components
 
 import com.nfx.android.heartfit.HeartRateGraph
+import com.nfx.android.heartfit.LoginScreen
 import com.nfx.android.heartfit.dependancyinjection.BaseActivity
 import com.nfx.android.heartfit.dependancyinjection.module.ActivityModule
-import com.nfx.android.heartfit.dependancyinjection.module.ApplicationModule
 import com.nfx.android.heartfit.dependancyinjection.module.NetworkModule
 import com.nfx.android.heartfit.dependancyinjection.scopes.PerActivity
-
 import dagger.BindsInstance
 import dagger.Component
 
@@ -26,4 +25,5 @@ interface ActivityComponent {
     }
 
     fun inject(healthRateGraph: HeartRateGraph)
+    fun inject(healthRateGraph: LoginScreen)
 }

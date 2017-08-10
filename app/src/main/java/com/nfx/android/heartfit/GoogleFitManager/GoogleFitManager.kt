@@ -11,7 +11,7 @@ import com.google.android.gms.fitness.request.DataReadRequest
 import com.google.android.gms.fitness.result.DataReadResult
 import io.reactivex.Observable
 import io.reactivex.subjects.PublishSubject
-import java.util.Calendar
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 
@@ -28,6 +28,7 @@ class GoogleFitManager(activity: Activity) {
         fitApiClient = GoogleApiClient.Builder(activity)
                 .addApi(Fitness.HISTORY_API)
                 .addScope(Scope(Scopes.FITNESS_BODY_READ))
+                .useDefaultAccount()
                 .addConnectionCallbacks(object : GoogleApiClient.ConnectionCallbacks {
                     override fun onConnected(initialBundle: Bundle?) {
                         connectionResultPublishSubject.onNext(ConnectionUpdate.onConnected())
@@ -49,21 +50,18 @@ class GoogleFitManager(activity: Activity) {
 
         return Observable.create({
             val readRequest = DataReadRequest.Builder()
+                    .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                     .read(DataType.TYPE_HEART_RATE_BPM)
                     .enableServerQueries()
-                    .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
                     .build()
 
-
             val result = Fitness.HistoryApi.readData(fitApiClient, readRequest)
-                    .await(5, TimeUnit.SECONDS)
 
-            if (result.status.isSuccess) {
-                it.onNext(result)
+            result.setResultCallback({
+                resultData ->
+                it.onNext(resultData)
                 it.onComplete()
-            } else {
-                it.onError(FitApiException(result.status))
-            }
+            }, 30, TimeUnit.SECONDS)
         })
     }
 
@@ -74,20 +72,18 @@ class GoogleFitManager(activity: Activity) {
         return Observable.create({
             val readRequest = DataReadRequest.Builder()
                     .aggregate(DataType.TYPE_HEART_RATE_BPM, DataType.AGGREGATE_HEART_RATE_SUMMARY)
-                    .bucketByTime(1, TimeUnit.DAYS)
                     .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                    .enableServerQueries()
                     .build()
 
 
             val result = Fitness.HistoryApi.readData(fitApiClient, readRequest)
-                    .await(5, TimeUnit.SECONDS)
 
-            if (result.status.isSuccess) {
-                it.onNext(result)
+            result.setResultCallback({
+                resultData ->
+                it.onNext(resultData)
                 it.onComplete()
-            } else {
-                it.onError(FitApiException(result.status))
-            }
+            }, 30, TimeUnit.SECONDS)
         })
     }
 
@@ -113,7 +109,7 @@ class GoogleFitManager(activity: Activity) {
 
     fun connect() {
         if( !fitApiClient.isConnecting && !fitApiClient.isConnected) {
-            fitApiClient.connect();
+            fitApiClient.connect()
         }
     }
 }
