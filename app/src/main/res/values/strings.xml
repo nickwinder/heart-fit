@@ -5,4 +5,6 @@
     <string name="average">average</string>
     <string name="minimum">minimum</string>
     <string name="maximum">maximum</string>
+    <string name="permission_rationale">It is necessary to access body sensor data for the application to function.</string>
+    <string name="permissions">Permissions</string>
 </resources>
