@@ -77,8 +77,18 @@ class GoogleFitHeartRateInterface(activity: Activity) : HeartRateDataInterface {
         }
     }
 
+    override fun getMinHeartRate(day: Calendar): Single<HeartRateData> {
+        return Single.create<HeartRateData> {
+            googleFitManager.getSummaryHeartRate(day)
+                    ?.subscribeOn(Schedulers.io())
+                    ?.subscribe({ dataReadResult ->
+                        val heartRateData = getFieldFromDataSet(dataReadResult, Field.FIELD_MIN)
+                        it.onSuccess(heartRateData)}, {throwable -> it.onError(throwable)})
+        }
+    }
+
     private fun getFieldFromDataSet(dataReadResult: DataReadResult, fieldType: Field): HeartRateData {
-        val heartRateData = HeartRateData(0 , 0f)
+        val heartRateData = HeartRateData(0, 0f)
         for (buckets in dataReadResult.buckets) {
             for (dataSet in buckets.dataSets) {
                 for (dataPoint in dataSet.dataPoints) {
@@ -94,16 +104,6 @@ class GoogleFitHeartRateInterface(activity: Activity) : HeartRateDataInterface {
             }
         }
         return heartRateData
-    }
-
-    override fun getMinHeartRate(day: Calendar): Single<HeartRateData> {
-        return Single.create<HeartRateData> {
-            googleFitManager.getSummaryHeartRate(day)
-                    ?.subscribeOn(Schedulers.io())
-                    ?.subscribe({ dataReadResult ->
-                        val heartRateData = getFieldFromDataSet(dataReadResult, Field.FIELD_MIN)
-                        it.onSuccess(heartRateData)}, {throwable -> it.onError(throwable)})
-        }
     }
 
     private fun removeDuplicateStartValues(heartRateValues : List<HeartRateData>): List<HeartRateData> {

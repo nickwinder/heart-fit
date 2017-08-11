@@ -73,6 +73,7 @@ class GoogleFitManager(activity: Activity) {
             val readRequest = DataReadRequest.Builder()
                     .aggregate(DataType.TYPE_HEART_RATE_BPM, DataType.AGGREGATE_HEART_RATE_SUMMARY)
                     .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
+                    .bucketByTime(1, TimeUnit.DAYS)
                     .enableServerQueries()
                     .build()
 
