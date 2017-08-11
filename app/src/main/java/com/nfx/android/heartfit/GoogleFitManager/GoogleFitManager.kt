@@ -112,4 +112,10 @@ class GoogleFitManager(activity: Activity) {
             fitApiClient.connect()
         }
     }
+
+    fun disconnect() {
+        if (fitApiClient.isConnected) {
+            fitApiClient.disconnect()
+        }
+    }
 }

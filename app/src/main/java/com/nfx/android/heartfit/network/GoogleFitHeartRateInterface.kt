@@ -29,6 +29,10 @@ class GoogleFitHeartRateInterface(activity: Activity) : HeartRateDataInterface {
         googleFitManager.connect()
     }
 
+    fun disconnectFromManager() {
+        googleFitManager.disconnect()
+    }
+
     override fun getAverageHeartRate(day: Calendar): Single<Float> {
         return Single.create<Float> {
             googleFitManager.getSummaryHeartRate(day)

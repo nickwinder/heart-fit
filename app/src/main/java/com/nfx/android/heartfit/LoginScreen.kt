@@ -33,6 +33,14 @@ class LoginScreen : BaseActivity() {
         connectToHeartRateInterface()
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        if (heartRateDataInterface is GoogleFitHeartRateInterface) {
+            (heartRateDataInterface as GoogleFitHeartRateInterface).disconnectFromManager()
+        }
+    }
+
     override fun onDestroy() {
         super.onDestroy()
 

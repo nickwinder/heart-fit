@@ -19,6 +19,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.nfx.android.heartfit.dependancyinjection.BaseActivity
 import com.nfx.android.heartfit.dependancyinjection.utils.Time
 import com.nfx.android.heartfit.model.HeartRateData
+import com.nfx.android.heartfit.network.GoogleFitHeartRateInterface
 import com.nfx.android.heartfit.network.HeartRateDataInterface
 import java.text.SimpleDateFormat
 import java.util.*
@@ -50,6 +51,10 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
 
         component.inject(this)
 
+        if (heartRateDataInterface is GoogleFitHeartRateInterface) {
+            (heartRateDataInterface as GoogleFitHeartRateInterface).connectToManager()
+        }
+
         setContentView(R.layout.activity_heart_rate_graph)
 
         heartRatePresenter = HeartRatePresenter(this, heartRateDataInterface)
@@ -59,15 +64,23 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         setupGraphsXAxis()
 
         setupDatePicker()
-
-        val calendar = Calendar.getInstance()
-        heartRatePresenter.getHeartRateDataForDate(calendar)
     }
 
     override fun onStart() {
         super.onStart()
 
         delayedHide(100)
+
+        val calendar = Calendar.getInstance()
+        heartRatePresenter.getHeartRateDataForDate(calendar)
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        if (heartRateDataInterface is GoogleFitHeartRateInterface) {
+            (heartRateDataInterface as GoogleFitHeartRateInterface).disconnectFromManager()
+        }
     }
 
     private fun setupGraphsXAxis() {

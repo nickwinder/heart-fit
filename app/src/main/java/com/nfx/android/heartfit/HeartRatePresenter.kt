@@ -5,7 +5,6 @@ import com.nfx.android.heartfit.GoogleFitManager.FitApiException
 import com.nfx.android.heartfit.network.HeartRateDataInterface
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 
