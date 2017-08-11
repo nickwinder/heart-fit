@@ -7,6 +7,7 @@ import android.os.Handler
 import android.support.v4.content.ContextCompat
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import com.github.badoualy.datepicker.DatePickerTimeline
 import com.github.mikephil.charting.charts.LineChart
@@ -38,6 +39,8 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
     val maxHeartRate: TextView by bindView(R.id.max_heart_rate)
     val lineChart: LineChart by bindView(R.id.line_chart)
     val datePicker : DatePickerTimeline by bindView(R.id.date_picker)
+    val fetchInProgress: ProgressBar by bindView(R.id.fetch_in_progress)
+    val heartRateSummary: ViewGroup by bindView(R.id.heart_rate_summary)
 
     @Inject lateinit var heartRateDataInterface: HeartRateDataInterface
     lateinit var heartRatePresenter: HeartRatePresenter
@@ -72,7 +75,7 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         delayedHide(100)
 
         val calendar = Calendar.getInstance()
-        heartRatePresenter.getHeartRateDataForDate(calendar)
+        fetchHeartRateData(calendar)
     }
 
     override fun onStop() {
@@ -150,18 +153,23 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
 
     override fun updateMinimumHeartRate(heartRate: Int) {
         minHeartRate.text = heartRate.toString()
+        setFetchFinished()
     }
 
     override fun updateMaximumHeartRate(heartRate: Int) {
         maxHeartRate.text = heartRate.toString()
+        setFetchFinished()
     }
 
     override fun updateAverageHeartRate(heartRate: Int) {
         averageHeartRate.text = heartRate.toString()
+        setFetchFinished()
     }
 
     override fun updateGraphData(heartRateData: List<HeartRateData>) {
         if(!heartRateData.isEmpty()) {
+            setFetchFinished()
+
             val entryList: MutableList<Entry> = mutableListOf()
 
             // Scale the axis so all data is on screen
@@ -213,7 +221,7 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
             val setCalendar = Calendar.getInstance()
             setCalendar.set(year, month, day)
 
-            heartRatePresenter.getHeartRateDataForDate(setCalendar)
+            fetchHeartRateData(setCalendar)
         }
     }
 
@@ -232,6 +240,18 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         return lineDataSet
     }
 
+    private fun setFetchInProgress() {
+        fetchInProgress.visibility = View.VISIBLE
+        heartRateSummary.visibility = View.GONE
+        lineChart.visibility = View.GONE
+    }
+
+    private fun setFetchFinished() {
+        fetchInProgress.visibility = View.GONE
+        heartRateSummary.visibility = View.VISIBLE
+        lineChart.visibility = View.VISIBLE
+    }
+
     @SuppressLint("InlinedApi")
     private fun hide() {
         // Hide UI first
@@ -244,5 +264,11 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
     private fun delayedHide(delayMillis: Int) {
         mHideHandler.removeCallbacks(mHideRunnable)
         mHideHandler.postDelayed(mHideRunnable, delayMillis.toLong())
+    }
+
+    private fun fetchHeartRateData(calendar: Calendar) {
+        setFetchInProgress()
+
+        heartRatePresenter.getHeartRateDataForDate(calendar)
     }
 }
