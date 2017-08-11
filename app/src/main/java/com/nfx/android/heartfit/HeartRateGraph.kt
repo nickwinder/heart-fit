@@ -99,17 +99,6 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         x.valueFormatter = xAxisFormatter
     }
 
-    private fun setXAxisLimits(x: XAxis, day: Calendar) {
-        day.set(Calendar.HOUR_OF_DAY, 6)
-        day.set(Calendar.MINUTE, 0)
-        day.set(Calendar.SECOND, 0)
-        day.set(Calendar.MILLISECOND, 0)
-        x.axisMinimum = Time.millisecondsToMinutes(day.timeInMillis).toFloat()
-        day.set(Calendar.HOUR_OF_DAY, 22)
-        x.axisMaximum = Time.millisecondsToMinutes(day.timeInMillis).toFloat()
-
-    }
-
     private fun setXAxisLimits(x: XAxis, firstTimeStamp: Long, lastTimestamp: Long) {
         val firstTime = Calendar.getInstance()
         firstTime.timeInMillis = firstTimeStamp
