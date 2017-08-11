@@ -85,7 +85,7 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
 
     private fun setupGraphsXAxis() {
         val x = lineChart.xAxis
-        x.textColor = ContextCompat.getColor(this, android.R.color.primary_text_light)
+        x.textColor = ContextCompat.getColor(this, R.color.textDarkSecondary)
         x.position = XAxis.XAxisPosition.BOTTOM_INSIDE
         x.setDrawGridLines(false)
         x.setDrawAxisLine(false)
@@ -135,6 +135,7 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         y.axisMaximum = 199f
         y.labelCount = 6
         y.textSize = 16f
+        y.textColor = ContextCompat.getColor(this, R.color.textDarkSecondary)
     }
 
     private fun setupGraphView() {
