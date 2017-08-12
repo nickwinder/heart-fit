@@ -40,16 +40,12 @@ class LoginScreen : BaseActivity() {
         component.inject(this)
 
         setContentView(R.layout.activity_login_screen)
-    }
-
-    override fun onStart() {
-        super.onStart()
 
         connectToHeartRateInterface()
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroy() {
+        super.onDestroy()
 
         if (googleFitConnectionListener != null) {
             (googleFitConnectionListener as Disposable).dispose()
