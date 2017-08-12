@@ -54,10 +54,6 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
 
         component.inject(this)
 
-        if (heartRateDataInterface is GoogleFitHeartRateInterface) {
-            (heartRateDataInterface as GoogleFitHeartRateInterface).connectToManager()
-        }
-
         setContentView(R.layout.activity_heart_rate_graph)
 
         heartRatePresenter = HeartRatePresenter(this, heartRateDataInterface)
@@ -72,10 +68,11 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
     override fun onStart() {
         super.onStart()
 
-        delayedHide(100)
+        if (heartRateDataInterface is GoogleFitHeartRateInterface) {
+            (heartRateDataInterface as GoogleFitHeartRateInterface).connectToManager()
+        }
 
-        val calendar = Calendar.getInstance()
-        fetchHeartRateData(calendar)
+        delayedHide(100)
     }
 
     override fun onStop() {
@@ -223,6 +220,12 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
 
             fetchHeartRateData(setCalendar)
         }
+
+        // Set initial value
+        val setCalendar = Calendar.getInstance()
+        setCalendar.set(datePicker.selectedYear, datePicker.selectedMonth, datePicker.selectedDay)
+
+        fetchHeartRateData(setCalendar)
     }
 
     private fun setupLineData(entryList: MutableList<Entry>): LineDataSet {
