@@ -184,6 +184,9 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
             override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {
             }
         }
+
+        lineChart.setNoDataText(getString(R.string.no_data_to_display))
+        lineChart.setNoDataTextColor(ContextCompat.getColor(this, R.color.textDarkSecondary))
     }
 
     override fun updateMinimumHeartRate(heartRate: Int) {
