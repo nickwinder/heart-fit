@@ -6,13 +6,16 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.IntentSender
 import android.content.pm.PackageManager
+import android.graphics.drawable.Animatable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.widget.ImageView
 import com.google.android.gms.common.ConnectionResult
 import com.nfx.android.heartfit.GoogleFitManager.ConnectionStatus
 import com.nfx.android.heartfit.dependancyinjection.BaseActivity
@@ -20,6 +23,7 @@ import com.nfx.android.heartfit.network.GoogleFitHeartRateInterface
 import com.nfx.android.heartfit.network.HeartRateDataInterface
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
+import kotlin.concurrent.thread
 
 
 /**
@@ -29,6 +33,8 @@ import javax.inject.Inject
 class LoginScreen : BaseActivity() {
     @Inject lateinit var heartRateDataInterface: HeartRateDataInterface
     var googleFitConnectionListener: Disposable? = null
+
+    val heartFitLogo: ImageView by bindView(R.id.heart_fit_logo)
 
     private var authInProgress = false
     private val REQUEST_OAUTH = 1
@@ -42,6 +48,16 @@ class LoginScreen : BaseActivity() {
         setContentView(R.layout.activity_login_screen)
 
         connectToHeartRateInterface()
+
+        // Repeat animation
+        thread(start = true) {
+            while (true) {
+                if (!(heartFitLogo.drawable as Animatable).isRunning) {
+                    runOnUiThread { (heartFitLogo.drawable as Animatable).start() }
+                }
+                Thread.sleep(100)
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -86,9 +102,11 @@ class LoginScreen : BaseActivity() {
     }
 
     private fun progressToMainScreen() {
-        val intent = Intent(this, HeartRateGraph::class.java)
-        startActivity(intent)
-        finish()
+        Handler().postDelayed({
+            val intent = Intent(this, HeartRateGraph::class.java)
+            startActivity(intent)
+            finish()
+        }, 1000)
     }
 
     private fun googleFitAccessSuspended() {
