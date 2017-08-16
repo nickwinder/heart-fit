@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.content.ContextCompat
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
@@ -17,6 +18,8 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.listener.ChartTouchListener
+import com.github.mikephil.charting.listener.OnChartGestureListener
 import com.nfx.android.heartfit.dependancyinjection.BaseActivity
 import com.nfx.android.heartfit.dependancyinjection.utils.Time
 import com.nfx.android.heartfit.model.HeartRateData
@@ -146,6 +149,41 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         lineChart.legend.isEnabled = false
         lineChart.isScaleYEnabled = false
         lineChart.setViewPortOffsets(0f, 0f, 0f, 0f)
+
+        lineChart.onChartGestureListener = object : OnChartGestureListener {
+            override fun onChartGestureEnd(me: MotionEvent?, lastPerformedGesture: ChartTouchListener.ChartGesture?) {
+            }
+
+            override fun onChartFling(me1: MotionEvent?, me2: MotionEvent?, velocityX: Float, velocityY: Float) {
+                if (lineChart.isFullyZoomedOut) {
+                    if (me1 != null && me2 != null) {
+                        if (me1.x > me2.x) {
+                            selectNextDay()
+                        } else {
+                            selectPreviousDay()
+                        }
+                    }
+                }
+            }
+
+            override fun onChartSingleTapped(me: MotionEvent?) {
+            }
+
+            override fun onChartGestureStart(me: MotionEvent?, lastPerformedGesture: ChartTouchListener.ChartGesture?) {
+            }
+
+            override fun onChartScale(me: MotionEvent?, scaleX: Float, scaleY: Float) {
+            }
+
+            override fun onChartLongPressed(me: MotionEvent?) {
+            }
+
+            override fun onChartDoubleTapped(me: MotionEvent?) {
+            }
+
+            override fun onChartTranslate(me: MotionEvent?, dX: Float, dY: Float) {
+            }
+        }
     }
 
     override fun updateMinimumHeartRate(heartRate: Int) {
@@ -223,7 +261,7 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
 
         // Set initial value
         val setCalendar = Calendar.getInstance()
-        setCalendar.set(datePicker.selectedYear, datePicker.selectedMonth, datePicker.selectedDay)
+        setDate(setCalendar)
 
         fetchHeartRateData(setCalendar)
     }
@@ -273,5 +311,30 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         setFetchInProgress()
 
         heartRatePresenter.getHeartRateDataForDate(calendar)
+    }
+
+    private fun selectNextDay() {
+        val tomorrow = Calendar.getInstance()
+        tomorrow.add(Calendar.DAY_OF_MONTH, 1)
+        val nextDay = Calendar.getInstance()
+        nextDay.set(datePicker.selectedYear, datePicker.selectedMonth, datePicker.selectedDay)
+        nextDay.add(Calendar.DAY_OF_MONTH, 1)
+
+        if (nextDay.before(tomorrow)) {
+            setDate(nextDay)
+        }
+    }
+
+    private fun selectPreviousDay() {
+        val previousDay = Calendar.getInstance()
+        previousDay.set(datePicker.selectedYear, datePicker.selectedMonth, datePicker.selectedDay)
+        previousDay.add(Calendar.DAY_OF_MONTH, -1)
+
+        setDate(previousDay)
+    }
+
+    private fun setDate(calendar: Calendar) {
+        datePicker.setSelectedDate(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH))
     }
 }
