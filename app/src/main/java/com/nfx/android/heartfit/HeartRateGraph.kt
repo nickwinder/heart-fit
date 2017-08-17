@@ -20,11 +20,11 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
+import com.nfx.android.heartfit.datainterface.GoogleFitHeartRateInterface
+import com.nfx.android.heartfit.datainterface.HeartRateDataInterface
 import com.nfx.android.heartfit.dependancyinjection.BaseActivity
 import com.nfx.android.heartfit.dependancyinjection.utils.Time
 import com.nfx.android.heartfit.model.HeartRateData
-import com.nfx.android.heartfit.network.GoogleFitHeartRateInterface
-import com.nfx.android.heartfit.network.HeartRateDataInterface
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject

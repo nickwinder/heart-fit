@@ -2,7 +2,7 @@ package com.nfx.android.heartfit
 
 import android.util.Log
 import com.nfx.android.heartfit.GoogleFitManager.FitApiException
-import com.nfx.android.heartfit.network.HeartRateDataInterface
+import com.nfx.android.heartfit.datainterface.HeartRateDataInterface
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers

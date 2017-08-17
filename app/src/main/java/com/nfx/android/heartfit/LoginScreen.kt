@@ -18,9 +18,9 @@ import android.util.Log
 import android.widget.ImageView
 import com.google.android.gms.common.ConnectionResult
 import com.nfx.android.heartfit.GoogleFitManager.ConnectionStatus
+import com.nfx.android.heartfit.datainterface.GoogleFitHeartRateInterface
+import com.nfx.android.heartfit.datainterface.HeartRateDataInterface
 import com.nfx.android.heartfit.dependancyinjection.BaseActivity
-import com.nfx.android.heartfit.network.GoogleFitHeartRateInterface
-import com.nfx.android.heartfit.network.HeartRateDataInterface
 import io.reactivex.disposables.Disposable
 import javax.inject.Inject
 import kotlin.concurrent.thread

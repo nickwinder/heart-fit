@@ -2,9 +2,9 @@ package com.nfx.android.heartfit
 
 import com.google.android.gms.common.api.Status
 import com.nfx.android.heartfit.GoogleFitManager.FitApiException
+import com.nfx.android.heartfit.datainterface.GoogleFitHeartRateInterface
+import com.nfx.android.heartfit.datainterface.HeartRateDataInterface
 import com.nfx.android.heartfit.model.HeartRateData
-import com.nfx.android.heartfit.network.GoogleFitHeartRateInterface
-import com.nfx.android.heartfit.network.HeartRateDataInterface
 import com.nhaarman.mockito_kotlin.any
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
