@@ -1,7 +1,6 @@
-package com.nfx.android.heartfit.network
+package com.nfx.android.heartfit.datainterface
 
 import com.nfx.android.heartfit.model.HeartRateData
-import io.reactivex.Observable
 import io.reactivex.Single
 import java.util.*
 

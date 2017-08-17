@@ -1,15 +1,11 @@
 package com.nfx.android.heartfit.dependancyinjection.module
 
 import android.app.Activity
-import android.app.Application
-import android.content.Context
-import com.nfx.android.heartfit.network.GoogleFitHeartRateInterface
-import com.nfx.android.heartfit.network.HeartRateDataInterface
-import com.nfx.android.heartfit.network.TestHeartRateDataInterface
+import com.nfx.android.heartfit.datainterface.GoogleFitHeartRateInterface
+import com.nfx.android.heartfit.datainterface.HeartRateDataInterface
 
 import dagger.Module
 import dagger.Provides
-import java.util.*
 
 /**
  * NFX Development

@@ -1,4 +1,4 @@
-package com.nfx.android.heartfit.network
+package com.nfx.android.heartfit.datainterface
 
 import io.reactivex.functions.Consumer
 import org.hamcrest.MatcherAssert.assertThat

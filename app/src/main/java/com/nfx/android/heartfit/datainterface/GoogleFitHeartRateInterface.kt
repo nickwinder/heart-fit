@@ -1,4 +1,4 @@
-package com.nfx.android.heartfit.network
+package com.nfx.android.heartfit.datainterface
 
 import android.app.Activity
 import com.google.android.gms.fitness.data.DataType
