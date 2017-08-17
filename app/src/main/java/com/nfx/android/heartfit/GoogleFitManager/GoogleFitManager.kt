@@ -59,8 +59,13 @@ class GoogleFitManager(activity: Activity) {
 
             result.setResultCallback({
                 resultData ->
-                it.onNext(resultData)
-                it.onComplete()
+
+                if (resultData.status.isSuccess) {
+                    it.onNext(resultData)
+                    it.onComplete()
+                } else {
+                    it.onError(FitApiException(resultData.status))
+                }
             }, 30, TimeUnit.SECONDS)
         })
     }
@@ -82,8 +87,12 @@ class GoogleFitManager(activity: Activity) {
 
             result.setResultCallback({
                 resultData ->
-                it.onNext(resultData)
-                it.onComplete()
+                if (resultData.status.isSuccess) {
+                    it.onNext(resultData)
+                    it.onComplete()
+                } else {
+                    it.onError(FitApiException(resultData.status))
+                }
             }, 30, TimeUnit.SECONDS)
         })
     }
