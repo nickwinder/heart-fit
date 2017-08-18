@@ -2,9 +2,8 @@ package com.nfx.android.heartfit.dependancyinjection.module
 
 import android.app.Activity
 import android.content.Context
-
 import com.nfx.android.heartfit.dependancyinjection.BaseActivity
-
+import com.nfx.android.heartfit.dependancyinjection.scopes.PerActivity
 import dagger.Module
 import dagger.Provides
 
@@ -13,13 +12,12 @@ import dagger.Provides
  * Created by nick on 7/27/17.
  */
 @Module
-class ActivityModule {
+class ActivityModule(val activity: BaseActivity) {
     @Provides
-    internal fun provideActivity(activity: BaseActivity): Activity {
-        return activity
-    }
+    @PerActivity
+    fun provideContext(): Context = activity
+
     @Provides
-    internal fun provideContext(activity: BaseActivity): Context {
-        return activity
-    }
+    @PerActivity
+    fun provideActivity(): Activity = activity
 }

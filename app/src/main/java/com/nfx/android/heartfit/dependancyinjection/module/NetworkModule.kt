@@ -3,7 +3,6 @@ package com.nfx.android.heartfit.dependancyinjection.module
 import android.app.Activity
 import com.nfx.android.heartfit.datainterface.GoogleFitHeartRateInterface
 import com.nfx.android.heartfit.datainterface.HeartRateDataInterface
-
 import dagger.Module
 import dagger.Provides
 
@@ -13,9 +12,8 @@ import dagger.Provides
  */
 
 @Module
-internal class NetworkModule {
+open class NetworkModule {
     @Provides
-    internal fun providesHeartRateInterface(activity: Activity) : HeartRateDataInterface {
-        return GoogleFitHeartRateInterface(activity)
-    }
+    open fun providesHeartRateInterface(activity: Activity): HeartRateDataInterface =
+            GoogleFitHeartRateInterface(activity)
 }
