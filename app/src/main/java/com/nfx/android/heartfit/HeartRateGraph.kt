@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.content.ContextCompat
+import android.support.v4.view.GestureDetectorCompat
+import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
@@ -37,17 +39,18 @@ import javax.inject.Inject
  */
 class HeartRateGraph : BaseActivity(), HeartRateView {
     // View Binding via butterKnife
-    val mainLayout: ViewGroup by bindView(R.id.main_layout)
-    val averageHeartRate: TextView by bindView(R.id.average_heart_rate)
-    val minHeartRate: TextView by bindView(R.id.min_heart_rate)
-    val maxHeartRate: TextView by bindView(R.id.max_heart_rate)
+    private val mainLayout: ViewGroup by bindView(R.id.main_layout)
+    private val averageHeartRate: TextView by bindView(R.id.average_heart_rate)
+    private val minHeartRate: TextView by bindView(R.id.min_heart_rate)
+    private val maxHeartRate: TextView by bindView(R.id.max_heart_rate)
+    private val datePicker: DatePickerTimeline by bindView(R.id.date_picker)
+    private val fetchInProgress: ProgressBar by bindView(R.id.fetch_in_progress)
+    private val heartRateSummary: ViewGroup by bindView(R.id.heart_rate_summary)
     val lineChart: LineChart by bindView(R.id.line_chart)
-    val datePicker : DatePickerTimeline by bindView(R.id.date_picker)
-    val fetchInProgress: ProgressBar by bindView(R.id.fetch_in_progress)
-    val heartRateSummary: ViewGroup by bindView(R.id.heart_rate_summary)
 
     @Inject lateinit var heartRateDataInterface: HeartRateDataInterface
-    lateinit var heartRatePresenter: HeartRatePresenter
+    private lateinit var heartRatePresenter: HeartRatePresenter
+    private lateinit var detector: GestureDetectorCompat
 
     // system ui hider
     private val mHideHandler = Handler()
@@ -68,9 +71,51 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
 
         setupDatePicker()
 
+        setupSwipeListener()
+
         if (heartRateDataInterface is GoogleFitHeartRateInterface) {
             (heartRateDataInterface as GoogleFitHeartRateInterface).connectToManager()
         }
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        detector.onTouchEvent(event)
+        return super.onTouchEvent(event)
+    }
+
+    private fun setupSwipeListener() {
+        detector = GestureDetectorCompat(this, object : GestureDetector.OnGestureListener {
+            override fun onShowPress(p0: MotionEvent?) {
+            }
+
+            override fun onSingleTapUp(p0: MotionEvent?): Boolean {
+                return false
+            }
+
+            override fun onDown(p0: MotionEvent?): Boolean {
+                return false
+            }
+
+            override fun onFling(p0: MotionEvent?, p1: MotionEvent?, p2: Float, p3: Float): Boolean {
+                if (p0 != null && p1 != null) {
+                    if (p0.x > p1.x) {
+                        selectNextDay()
+                    } else {
+                        selectPreviousDay()
+                    }
+                    return true
+                }
+                return false
+            }
+
+            override fun onScroll(p0: MotionEvent?, p1: MotionEvent?, p2: Float, p3: Float): Boolean {
+                return false
+            }
+
+            override fun onLongPress(p0: MotionEvent?) {
+
+            }
+        })
     }
 
     override fun onStart() {
