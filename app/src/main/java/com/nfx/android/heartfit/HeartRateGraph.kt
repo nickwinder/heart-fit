@@ -27,6 +27,7 @@ import com.nfx.android.heartfit.dependancyinjection.utils.Time
 import com.nfx.android.heartfit.model.HeartRateData
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -97,7 +98,6 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         x.granularity = 30f
         x.isGranularityEnabled = true
 
-
         val xAxisFormatter = HourAxisValueFormatter(SimpleDateFormat("HH:mm", Locale.getDefault()))
         x.valueFormatter = xAxisFormatter
     }
@@ -108,18 +108,21 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         val lastTime = Calendar.getInstance()
         lastTime.timeInMillis = lastTimestamp
 
-        if(firstTime.get(Calendar.MINUTE) < 30) {
-            firstTime.set(Calendar.MINUTE, 30)
-        } else {
-            firstTime.add(Calendar.HOUR_OF_DAY, 1)
-            firstTime.set(Calendar.MINUTE , 0)
-        }
+        // If less than 2 hours there is no enough data to display
+        if (TimeUnit.MILLISECONDS.toHours(Math.abs(lastTimestamp - firstTimeStamp)) > 2) {
+            if (firstTime.get(Calendar.MINUTE) < 30) {
+                firstTime.set(Calendar.MINUTE, 30)
+            } else {
+                firstTime.add(Calendar.HOUR_OF_DAY, 1)
+                firstTime.set(Calendar.MINUTE, 0)
+            }
 
-        if(lastTime.get(Calendar.MINUTE) < 30) {
-            lastTime.add(Calendar.HOUR_OF_DAY, -1)
-            lastTime.set(Calendar.MINUTE, 0)
-        } else {
-            lastTime.set(Calendar.MINUTE , 30)
+            if (lastTime.get(Calendar.MINUTE) < 30) {
+                lastTime.add(Calendar.HOUR_OF_DAY, -1)
+                lastTime.set(Calendar.MINUTE, 0)
+            } else {
+                lastTime.set(Calendar.MINUTE, 30)
+            }
         }
 
         x.axisMinimum = Time.millisecondsToMinutes(firstTime.timeInMillis).toFloat()
@@ -207,6 +210,8 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
     override fun updateGraphData(heartRateData: List<HeartRateData>) {
         if(!heartRateData.isEmpty()) {
             setFetchFinished()
+
+            heartRateData.sortedBy { (timestamp) -> timestamp }
 
             val entryList: MutableList<Entry> = mutableListOf()
 
