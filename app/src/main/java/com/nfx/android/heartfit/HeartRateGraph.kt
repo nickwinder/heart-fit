@@ -72,9 +72,23 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         setupDatePicker()
 
         setupSwipeListener()
+    }
+
+    override fun onStart() {
+        super.onStart()
 
         if (heartRateDataInterface is GoogleFitHeartRateInterface) {
             (heartRateDataInterface as GoogleFitHeartRateInterface).connectToManager()
+        }
+
+        delayedHide(100)
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        if (heartRateDataInterface is GoogleFitHeartRateInterface) {
+            (heartRateDataInterface as GoogleFitHeartRateInterface).disconnectFromManager()
         }
     }
 
@@ -116,20 +130,6 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
 
             }
         })
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        delayedHide(100)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        if (heartRateDataInterface is GoogleFitHeartRateInterface) {
-            (heartRateDataInterface as GoogleFitHeartRateInterface).disconnectFromManager()
-        }
     }
 
     private fun setupGraphsXAxis() {
