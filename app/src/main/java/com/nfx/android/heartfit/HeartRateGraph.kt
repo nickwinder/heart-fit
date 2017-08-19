@@ -22,6 +22,7 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.ChartTouchListener
 import com.github.mikephil.charting.listener.OnChartGestureListener
+import com.github.mikephil.charting.utils.Utils
 import com.nfx.android.heartfit.datainterface.GoogleFitHeartRateInterface
 import com.nfx.android.heartfit.datainterface.HeartRateDataInterface
 import com.nfx.android.heartfit.dependancyinjection.BaseActivity
@@ -323,14 +324,20 @@ class HeartRateGraph : BaseActivity(), HeartRateView {
         val lineDataSet = LineDataSet(entryList, "DataSet 1")
         lineDataSet.disableDashedLine()
         lineDataSet.setDrawCircles(false)
-        lineDataSet.fillColor = ContextCompat.getColor(this, R.color.colorPrimary)
-        lineDataSet.fillAlpha = 255
-        lineDataSet.color = Color.WHITE
+
+        if (Utils.getSDKInt() >= 18) {
+            lineDataSet.fillDrawable = ContextCompat.getDrawable(this, R.drawable.red_gradient)
+        } else {
+            lineDataSet.fillColor = ContextCompat.getColor(this, R.color.colorPrimaryLight)
+        }
+
         lineDataSet.setDrawFilled(true)
+
+        lineDataSet.color = Color.WHITE
         lineDataSet.setDrawValues(false)
 
-        lineDataSet.mode = LineDataSet.Mode.CUBIC_BEZIER
-        lineDataSet.cubicIntensity = 0.18f
+        lineDataSet.mode = LineDataSet.Mode.HORIZONTAL_BEZIER
+        lineDataSet.cubicIntensity = 0.1f
         return lineDataSet
     }
 
